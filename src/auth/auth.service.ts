@@ -75,6 +75,12 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string) {
+    if (!refreshToken)
+      throw new HttpException(
+        { message: 'No token provided with request', status: 'UNAUTHORIZED' },
+        HttpStatus.UNAUTHORIZED,
+      );
+
     const user = await this.prisma.user.findFirst({ where: { refreshToken } });
 
     if (!user)
