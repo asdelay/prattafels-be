@@ -15,16 +15,17 @@ datasource db {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
-  fullName     String
-  password     String
-  role         String        @default("student") //admin / student / teacher
-  avatarUrl    String?
-  refreshToken String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  lessons      LessonUsers[]
+  id                 Int           @id @default(autoincrement())
+  email              String        @unique
+  fullName           String
+  password           String
+  role               String        @default("student") //admin / student / teacher
+  wantsNotifications Boolean       @default(false)
+  avatarUrl          String?
+  refreshToken       String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  lessons            LessonUsers[]
 }
 
 model Lesson {

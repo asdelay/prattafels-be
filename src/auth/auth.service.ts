@@ -3,7 +3,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { generateTokens } from './heplers/jwt';
+import { generateTokens, verifyRefreshToken } from './heplers/jwt';
 
 @Injectable()
 export class AuthService {
@@ -72,5 +72,35 @@ export class AuthService {
     });
 
     return { accessToken, refreshToken: user.refreshToken };
+  }
+
+  async refresh(refreshToken: string) {
+    const user = await this.prisma.user.findFirst({ where: { refreshToken } });
+
+    if (!user)
+      throw new HttpException(
+        { message: 'No user found with such token', status: 'UNAUTHORIZED' },
+        HttpStatus.UNAUTHORIZED,
+      );
+
+    const isVerified = verifyRefreshToken(refreshToken);
+
+    if (!isVerified)
+      throw new HttpException(
+        { message: 'Expired Token', status: 'UNAUTHORIZED' },
+        HttpStatus.UNAUTHORIZED,
+      );
+
+    const tokens = generateTokens({
+      email: user.email,
+      fullName: user.fullName,
+    });
+
+    await this.prisma.user.update({
+      where: { email: user.email },
+      data: { refreshToken: tokens.refreshToken },
+    });
+
+    return tokens;
   }
 }

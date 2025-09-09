@@ -6,6 +6,7 @@ import {
   MinLength,
   MaxLength,
   IsOptional,
+  IsBoolean,
 } from 'class-validator';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
@@ -26,6 +27,10 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsString()
   @IsOptional()
   role?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  wantsNotifications?: boolean;
 
   @IsString()
   @IsOptional()

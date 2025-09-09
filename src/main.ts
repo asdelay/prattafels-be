@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const port = process.env.PORT || 3000;
@@ -13,6 +14,7 @@ async function bootstrap() {
       transform: true, // automatically transform payloads to DTO instances
     }),
   );
+  app.use(cookieParser());
 
   await app.listen(port);
   console.log(`server started on port ${port}`);

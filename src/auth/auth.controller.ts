@@ -1,8 +1,8 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { type Response } from 'express';
+import { Request, type Response } from 'express';
 
 @Controller('/auth')
 export class AuthController {
@@ -43,6 +43,23 @@ export class AuthController {
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
+    return { accessToken };
+  }
+
+  @Get('/refresh')
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const usersRefreshToken = req.cookies['refreshToken'];
+    const { accessToken, refreshToken } =
+      await this.authService.refresh(usersRefreshToken);
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
     return { accessToken };
   }
 }
