@@ -74,7 +74,7 @@ export class AuthService {
     return { accessToken, refreshToken: user.refreshToken };
   }
 
-  async refresh(refreshToken: string) {
+  async refresh(refreshToken: string | undefined) {
     if (!refreshToken)
       throw new HttpException(
         { message: 'No token provided with request', status: 'UNAUTHORIZED' },
