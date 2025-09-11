@@ -14,6 +14,10 @@ async function bootstrap() {
       transform: true, // automatically transform payloads to DTO instances
     }),
   );
+  app.enableCors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  });
   app.use(cookieParser());
 
   await app.listen(port);
