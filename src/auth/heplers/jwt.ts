@@ -7,7 +7,7 @@ export const generateTokens = ({
   email: string;
   fullName: string;
 }) => {
-  const accessToken = jwt.sign(
+  const newAccessToken = jwt.sign(
     { email, fullName },
     process.env.JWT_ACCESS_SECRET as string,
     {
@@ -15,7 +15,7 @@ export const generateTokens = ({
     },
   );
 
-  const refreshToken = jwt.sign(
+  const newRefreshToken = jwt.sign(
     { email, fullName },
     process.env.JWT_REFRESH_SECRET as string,
     {
@@ -23,7 +23,7 @@ export const generateTokens = ({
     },
   );
 
-  return { accessToken, refreshToken };
+  return { newAccessToken, newRefreshToken };
 };
 
 export const verifyAccessToken = (accessToken: string) => {

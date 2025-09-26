@@ -23,7 +23,8 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
 
-    const isPassEqual = await bcrypt.compare(loginDto.password, user.password);
+    const { password, refreshToken, ...safeUser } = user;
+    const isPassEqual = await bcrypt.compare(loginDto.password, password);
 
     if (!isPassEqual)
       throw new HttpException(
@@ -31,17 +32,21 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
 
-    const { accessToken, refreshToken } = generateTokens({
+    const { newAccessToken, newRefreshToken } = generateTokens({
       email: loginDto.email,
       fullName: user.fullName,
     });
 
     const userData = await this.prisma.user.update({
       where: { email: user.email },
-      data: { refreshToken },
+      data: { refreshToken: newRefreshToken },
     });
 
-    return { accessToken, refreshToken: userData.refreshToken };
+    return {
+      accessToken: newAccessToken,
+      refreshToken: userData.refreshToken,
+      user: safeUser,
+    };
   }
   async register(registerDto: RegisterDto) {
     const candidate = await this.prisma.user.findFirst({
@@ -62,16 +67,20 @@ export class AuthService {
       Number(process.env.SALTROUNDS!),
     );
 
-    const { accessToken, refreshToken } = generateTokens({
+    const { newAccessToken, newRefreshToken } = generateTokens({
       email: registerDto.email,
       fullName: registerDto.fullName,
     });
 
     const user = await this.prisma.user.create({
-      data: { ...registerDto, password: hashedPass, refreshToken },
+      data: {
+        ...registerDto,
+        password: hashedPass,
+        refreshToken: newRefreshToken,
+      },
     });
 
-    return { accessToken, refreshToken: user.refreshToken };
+    return { accessToken: newAccessToken, refreshToken: user.refreshToken };
   }
 
   async refresh(refreshToken: string | undefined) {
@@ -104,7 +113,7 @@ export class AuthService {
 
     await this.prisma.user.update({
       where: { email: user.email },
-      data: { refreshToken: tokens.refreshToken },
+      data: { refreshToken: tokens.newRefreshToken },
     });
 
     return tokens;

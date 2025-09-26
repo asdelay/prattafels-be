@@ -13,7 +13,7 @@ export class AuthController {
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, refreshToken } =
+    const { accessToken, refreshToken, user } =
       await this.authService.login(loginDto);
 
     // Send refreshToken as HttpOnly cookie
@@ -25,7 +25,7 @@ export class AuthController {
     });
 
     // Send accessToken in JSON response
-    return { accessToken };
+    return { accessToken, user };
   }
 
   @Post('/register')
@@ -53,7 +53,7 @@ export class AuthController {
   ) {
     const cookies = req.cookies as { refreshToken?: string };
     const usersRefreshToken = cookies.refreshToken;
-    const { accessToken, refreshToken } =
+    const { newAccessToken: accessToken, newRefreshToken: refreshToken } =
       await this.authService.refresh(usersRefreshToken);
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
