@@ -53,7 +53,7 @@ export class AuthController {
   ) {
     const cookies = req.cookies as { refreshToken?: string };
     const usersRefreshToken = cookies.refreshToken;
-    const { newAccessToken: accessToken, newRefreshToken: refreshToken } =
+    const { accessToken, refreshToken, user } =
       await this.authService.refresh(usersRefreshToken);
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -61,6 +61,6 @@ export class AuthController {
       sameSite: 'strict',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
-    return { accessToken };
+    return { accessToken, user };
   }
 }

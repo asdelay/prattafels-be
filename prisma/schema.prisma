@@ -50,3 +50,10 @@ model LessonUsers {
 
   @@id([userId, lessonId]) // composite primary key
 }
+
+model Office {
+  id           Int    @id @default(autoincrement())
+  address      String
+  workingHours String
+  workingDays  String
+}

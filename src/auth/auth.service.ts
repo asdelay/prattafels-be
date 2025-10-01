@@ -83,14 +83,16 @@ export class AuthService {
     return { accessToken: newAccessToken, refreshToken: user.refreshToken };
   }
 
-  async refresh(refreshToken: string | undefined) {
-    if (!refreshToken)
+  async refresh(userRefreshToken: string | undefined) {
+    if (!userRefreshToken)
       throw new HttpException(
         { message: 'No token provided with request', status: 'UNAUTHORIZED' },
         HttpStatus.UNAUTHORIZED,
       );
 
-    const user = await this.prisma.user.findFirst({ where: { refreshToken } });
+    const user = await this.prisma.user.findFirst({
+      where: { refreshToken: userRefreshToken },
+    });
 
     if (!user)
       throw new HttpException(
@@ -98,7 +100,7 @@ export class AuthService {
         HttpStatus.UNAUTHORIZED,
       );
 
-    const isVerified = verifyRefreshToken(refreshToken);
+    const isVerified = verifyRefreshToken(userRefreshToken);
 
     if (!isVerified)
       throw new HttpException(
@@ -116,6 +118,12 @@ export class AuthService {
       data: { refreshToken: tokens.newRefreshToken },
     });
 
-    return tokens;
+    const { password, refreshToken, ...safeUser } = user;
+
+    return {
+      accessToken: tokens.newAccessToken,
+      refreshToken: tokens.newRefreshToken,
+      user: safeUser,
+    };
   }
 }

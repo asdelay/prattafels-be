@@ -9,9 +9,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // strips properties not in the DTO
-      forbidNonWhitelisted: true, // throws error if extra fields are present
-      transform: true, // automatically transform payloads to DTO instances
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
   app.enableCors({
