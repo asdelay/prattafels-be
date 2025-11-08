@@ -14,46 +14,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum USER_ROLES {
+  STUDENT
+  ADMIN
+  TEACHER
+}
+
 model User {
-  id                 Int           @id @default(autoincrement())
-  email              String        @unique
+  id                 Int        @id @default(autoincrement())
+  email              String     @unique
   fullName           String
   password           String
-  role               String        @default("student") //admin / student / teacher
-  wantsNotifications Boolean       @default(false)
+  role               USER_ROLES @default(STUDENT) //admin / student / teacher
+  wantsNotifications Boolean    @default(false)
   avatarUrl          String?
   refreshToken       String?
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
-  lessons            LessonUsers[]
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  lessonsToAttend    Lesson[]
 }
 
 model Lesson {
-  id        Int           @id @default(autoincrement())
-  location  String
-  startTime DateTime
-  endTime   DateTime
-  date      DateTime
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  users     LessonUsers[]
-}
-
-model LessonUsers {
-  userId     Int
-  lessonId   Int
-  willAttend Boolean  @default(false)
+  id         Int      @id @default(autoincrement())
+  startTime  DateTime
+  endTime    DateTime
+  date       DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id])
-  lesson     Lesson   @relation(fields: [lessonId], references: [id])
-
-  @@id([userId, lessonId]) // composite primary key
+  attendees  User[]
+  location   Office   @relation(fields: [locationId], references: [id])
+  locationId Int
 }
 
 model Office {
-  id           Int    @id @default(autoincrement())
-  address      String
-  workingHours String
-  workingDays  String
+  id       Int      @id @default(autoincrement())
+  imageUrl String
+  address  String
+  lessons  Lesson[]
 }

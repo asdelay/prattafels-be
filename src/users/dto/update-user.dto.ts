@@ -8,6 +8,7 @@ import {
   IsOptional,
   IsBoolean,
 } from 'class-validator';
+import { USER_ROLES } from 'generated/prisma';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsEmail()
@@ -26,7 +27,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   @IsString()
   @IsOptional()
-  role?: string;
+  role?: USER_ROLES;
 
   @IsBoolean()
   @IsOptional()

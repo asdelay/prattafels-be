@@ -13,4 +13,7 @@ export class CreateLessonDto {
 
   @IsDateString()
   date: Date;
+
+  @IsString()
+  imageUrl: string;
 }

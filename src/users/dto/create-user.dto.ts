@@ -5,6 +5,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { USER_ROLES } from 'generated/prisma';
 export class CreateUserDto {
   @IsEmail()
   email: string;
@@ -18,7 +19,8 @@ export class CreateUserDto {
   password: string;
 
   @IsString()
-  role: string;
+  @IsOptional()
+  role?: USER_ROLES;
 
   @IsString()
   @IsOptional()
