@@ -35,20 +35,23 @@ model User {
 }
 
 model Lesson {
-  id         Int      @id @default(autoincrement())
-  startTime  DateTime
-  endTime    DateTime
-  date       DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  attendees  User[]
-  location   Office   @relation(fields: [locationId], references: [id])
-  locationId Int
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  startTime   DateTime
+  endTime     DateTime
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  attendees   User[]
+  location    Office   @relation(fields: [locationId], references: [id])
+  locationId  Int
 }
 
 model Office {
   id       Int      @id @default(autoincrement())
-  imageUrl String
+  name     String
   address  String
+  imageUrl String?
   lessons  Lesson[]
 }

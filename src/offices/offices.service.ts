@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateOfficeDto } from './dto/create-office.dto';
 import { UpdateOfficeDto } from './dto/update-office.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -12,6 +12,10 @@ export class OfficesService {
         ...createOfficeDto,
       },
     });
+
+    if(!newOffice) {
+      throw new BadRequestException("Error while creating office")
+    }
 
     return newOffice;
   }

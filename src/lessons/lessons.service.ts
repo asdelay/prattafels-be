@@ -14,7 +14,9 @@ export class LessonsService {
   }
 
   async findAll() {
-    const lessons = await this.prisma.lesson.findMany();
+    const lessons = await this.prisma.lesson.findMany({
+      include: { location: true, attendees: true },
+    });
     if (!lessons)
       throw new HttpException(
         { message: 'Lessons not found', code: 'BAD_REQUEST' },
@@ -34,17 +36,31 @@ export class LessonsService {
   }
 
   async update(id: number, updateLessonDto: UpdateLessonDto) {
-    const lesson = await this.prisma.lesson.findFirst({ where: { id } });
-    if (!lesson)
+    const lesson = await this.prisma.lesson.findUnique({
+      where: { id },
+    });
+
+    if (!lesson) {
       throw new HttpException(
         { message: 'Lesson not found', code: 'BAD_REQUEST' },
         HttpStatus.BAD_REQUEST,
       );
+    }
+
+    const data: any = { ...updateLessonDto };
+
+    if (updateLessonDto.attendeeId) {
+      data.attendees = {
+        connect: { id: updateLessonDto.attendeeId },
+      };
+    }
 
     const updatedLesson = await this.prisma.lesson.update({
       where: { id },
-      data: { ...updateLessonDto },
+      data,
+      include: { attendees: true },
     });
+
     return updatedLesson;
   }
 

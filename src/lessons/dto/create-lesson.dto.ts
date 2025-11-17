@@ -1,9 +1,16 @@
-import { IsDateString, IsString, MinLength } from 'class-validator';
+import { IsDateString, IsNumber, IsString, MinLength } from 'class-validator';
 
 export class CreateLessonDto {
   @IsString()
-  @MinLength(3)
-  location: string;
+  @MinLength(2)
+  name: string;
+
+  @IsString()
+  @MinLength(2)
+  description: string;
+
+  @IsNumber()
+  locationId: number;
 
   @IsDateString()
   startTime: Date;
@@ -13,7 +20,4 @@ export class CreateLessonDto {
 
   @IsDateString()
   date: Date;
-
-  @IsString()
-  imageUrl: string;
 }
