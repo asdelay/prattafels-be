@@ -20,18 +20,25 @@ enum USER_ROLES {
   TEACHER
 }
 
+enum TEACHER_APPLICATION_STATUS {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
-  id                 Int        @id @default(autoincrement())
-  email              String     @unique
-  fullName           String
-  password           String
-  role               USER_ROLES @default(STUDENT) //admin / student / teacher
-  wantsNotifications Boolean    @default(false)
-  avatarUrl          String?
-  refreshToken       String?
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-  lessonsToAttend    Lesson[]
+  id                  Int                  @id @default(autoincrement())
+  email               String               @unique
+  fullName            String
+  password            String
+  role                USER_ROLES           @default(STUDENT) //admin / student / teacher
+  wantsNotifications  Boolean              @default(false)
+  avatarUrl           String?
+  refreshToken        String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  lessonsToAttend     Lesson[]
+  teacherApplications TeacherApplication[]
 }
 
 model Lesson {
@@ -54,4 +61,15 @@ model Office {
   address  String
   imageUrl String?
   lessons  Lesson[]
+}
+
+model TeacherApplication {
+  id               Int                        @id @default(autoincrement())
+  user             User                       @relation(fields: [userId], references: [id])
+  userId           Int
+  languageLevel    String
+  motivationLetter String
+  status           TEACHER_APPLICATION_STATUS @default(PENDING) // PENDING, APPROVED, REJECTED
+  createdAt        DateTime                   @default(now())
+  updatedAt        DateTime                   @updatedAt
 }
